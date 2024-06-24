@@ -14,16 +14,16 @@ from dotenv import load_dotenv
 load_dotenv()
 
 MAX_ROWS = 200
-
+FILENAME = "./datasets/corona-sentiments.csv"
 
 def retrieve_and_augment_data(input: str, iter_count: int):
     llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.9)
     embedding_function = OpenAIEmbeddings()
     stores = Chroma(
-        persist_directory="./chromadb", embedding_function=embedding_function
+        persist_directory="./chromadeeznuts", embedding_function=embedding_function
     )
 
-    model = embed_data("./datasets/stories.csv")
+    model = embed_data(FILENAME)
 
     template = """
         You are a creative AI assistant whose purpose is to perform data augmentation on a given set of data. 
@@ -65,7 +65,7 @@ def retrieve_and_augment_data(input: str, iter_count: int):
     for _ in range(iter_count):
         results.append(rag_chain.invoke(input))
 
-    append_to_csv("./datasets/stories.csv", data=results)
+    append_to_csv(FILENAME, data=results)
 
     return results
 
@@ -78,6 +78,6 @@ def append_to_csv(filepath, data):
 
 
 results = retrieve_and_augment_data(
-    "Please augment data relating to impersonation scams.", 2
+    "Please generate data with negative Corona sentiments. Try to emulate how people text on Twitter, e.g. spelling mistakes and abbreviations.", 4
 )
 print(results)

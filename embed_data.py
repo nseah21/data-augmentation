@@ -1,17 +1,25 @@
-# from langchain_community.document_loaders.csv_loader import CSVLoader
-# from langchain_chroma import Chroma
-# from langchain_openai import OpenAIEmbeddings
-# from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_community.document_loaders.csv_loader import CSVLoader
+from langchain_chroma import Chroma
+from langchain_openai import OpenAIEmbeddings
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from pydantic import create_model
 import pandas as pd
+import chardet
+import json
 
 
 def embed_data(filepath):
     # Extract column names from CSV
-    df = pd.read_csv(filepath)
-    fieldnames = list(df.columns)
+    with open(filepath, "rb") as file:
+        raw_data = file.read()
+        result = chardet.detect(raw_data)
+        encoding = result["encoding"]
 
-    print(fieldnames)
-    return 
+    df = pd.read_csv(filepath, encoding=encoding, nrows=0)
+    fieldnames = list(df.columns)[:-1]
+
+    fields = {field: (str, ...) for field in fieldnames}
+    model = create_model("CSVModel", **fields)
 
     # Load data using CSVLoader
     loader = CSVLoader(
@@ -25,12 +33,14 @@ def embed_data(filepath):
     chunks = splitter.split_documents(docs)
 
     # Embed data into vector stores
-    stores = Chroma.from_documents(
-        documents=chunks, embedding=OpenAIEmbeddings(), persist_directory="./chromadb"
+    _ = Chroma.from_documents(
+        documents=chunks,
+        embedding=OpenAIEmbeddings(),
+        persist_directory="./chromadeeznuts",
     )
 
-    return stores
+    return model
 
 
 if __name__ == "__main__":
-    embed_data()
+    embed_data("./datasets/corona-sentiments.csv")
