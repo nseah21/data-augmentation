@@ -5,7 +5,6 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from pydantic import create_model
 import pandas as pd
 import chardet
-import json
 
 
 def embed_data(filepath):

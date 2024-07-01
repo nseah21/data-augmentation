@@ -4,7 +4,6 @@ from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_chroma import Chroma
-from typing import List
 import json
 import csv
 
@@ -31,10 +30,9 @@ def retrieve_and_augment_data(input: str, iter_count: int):
         
         {model}
         
-        You are to come up with a new scam story description based on the existing scam data in the vector store, and then label it with an appropriate scam type.
-        As much as possible, try to make the augmented data similar but distinct to existing entries in the vector store. 
+        As much as possible, try to make the augmented data similar to but distinct from existing entries in the vector store. 
         
-        You should try to generate new data that belong to different types of scams, instead of being fixated on just one type of scam. 
+        You should try to generate new data that belong to different categories, instead of being fixated on just one category. 
         
         Context: {context}
         Description: {description}
